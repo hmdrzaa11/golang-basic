@@ -21,7 +21,14 @@ func NewTemplate(a *config.AppConfig) {
 
 // RenderTemplate uses the template cache to parse a template
 func RenderTemplate(w http.ResponseWriter, templateName string) {
-	tmpCache := app.TemplateCache //get the template cache
+	var tmpCache map[string]*template.Template
+
+	if app.UseCache {
+		tmpCache = app.TemplateCache //get the template cache
+	} else {
+		tmpCache, _ = CreateTemplateCache() //create the template cache
+	}
+
 	if template, ok := tmpCache[templateName]; ok {
 		template.Execute(w, nil)
 	} else {
