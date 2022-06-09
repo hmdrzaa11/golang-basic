@@ -5,25 +5,32 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/hmdrzaa11/hello-world/pkg/config"
 )
 
 //map of some functions that we need to call inside of the template
 var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+// NewTemplate sets the value for appConfig
+func NewTemplate(a *config.AppConfig) {
+	app = a //set the AppConfig
+}
+
 // RenderTemplate uses the template cache to parse a template
 func RenderTemplate(w http.ResponseWriter, templateName string) {
-	tmpCache, err := createTemplateCache()
-	if err != nil {
-		//app should die
-		log.Fatal(err)
-	}
+	tmpCache := app.TemplateCache //get the template cache
 	if template, ok := tmpCache[templateName]; ok {
 		template.Execute(w, nil)
+	} else {
+		log.Fatal("could not get the template from the cache")
 	}
 }
 
-// createTemplateCache creates a map of template and their name as a cache
-func createTemplateCache() (map[string]*template.Template, error) {
+// CreateTemplateCache creates a map of template and their name as a cache
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	//its going to build all template and combine them with the "base" layout at the startup of the App and keeps it in cache
 	templateCache := map[string]*template.Template{}
 
