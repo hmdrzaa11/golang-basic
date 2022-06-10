@@ -29,13 +29,18 @@ func NewHandlers(r *Repository) {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	ip := r.RemoteAddr
+	//store it in session
+	repo.App.Session.Put(r.Context(), "remote_ip", ip)
 
 	render.RenderTemplate(w, "home.page.gohtml", &models.TemplateData{})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
+	remoteIP := repo.App.Session.GetString(r.Context(), "remote_ip")
 	stringMap := map[string]string{
 		"test": "another silly text",
+		"ip":   remoteIP,
 	}
 	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{StringMap: stringMap})
 }

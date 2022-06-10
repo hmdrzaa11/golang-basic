@@ -9,6 +9,13 @@
       <p>This is a test</p>
       <p class="danger">We are a bad company and you should avoid us!</p>
       <h2>This is from handler : {{ index .StringMap "test" }} </h2>
+      <h5>
+        {{ if ne (index .StringMap "ip") ""}}
+          IP: {{index .StringMap "ip" }}
+        {{else}}
+         I don't know your IP address please visit <a href="/">homepage</a> so i can set it.
+        {{end}}
+      </h5>
     </div>
   </div>
 </div>
