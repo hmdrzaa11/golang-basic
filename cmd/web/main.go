@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/hmdrzaa11/hello-world/pkg/config"
 	"github.com/hmdrzaa11/hello-world/pkg/handlers"
 	"github.com/hmdrzaa11/hello-world/pkg/render"
@@ -14,8 +16,23 @@ const (
 	portNumber = ":8080"
 )
 
+var (
+	app     config.AppConfig
+	session *scs.SessionManager
+)
+
 func main() {
-	var app config.AppConfig //we are going to share this through entire app
+	app.InProduction = false //set it to true when in production
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	//we are going to use the default "cookie" as store right now
+	session.Cookie.Persist = true                  //after user closes the webpage the cookie persist
+	session.Cookie.SameSite = http.SameSiteLaxMode //the restriction around what site this cookie need to apply to
+	session.Cookie.Secure = app.InProduction       //needs a https connection
+
+	//we assign the session to the app config
+	app.Session = session
+
 	templateCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("can not create template cache")
