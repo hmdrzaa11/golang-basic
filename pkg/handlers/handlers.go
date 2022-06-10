@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/hmdrzaa11/hello-world/pkg/config"
+	"github.com/hmdrzaa11/hello-world/pkg/models"
 	"github.com/hmdrzaa11/hello-world/pkg/render"
 )
 
@@ -28,9 +29,13 @@ func NewHandlers(r *Repository) {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.gohtml")
+
+	render.RenderTemplate(w, "home.page.gohtml", &models.TemplateData{})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.gohtml")
+	stringMap := map[string]string{
+		"test": "another silly text",
+	}
+	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{StringMap: stringMap})
 }

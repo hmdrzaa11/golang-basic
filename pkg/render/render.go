@@ -1,12 +1,14 @@
 package render
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 
 	"github.com/hmdrzaa11/hello-world/pkg/config"
+	"github.com/hmdrzaa11/hello-world/pkg/models"
 )
 
 //map of some functions that we need to call inside of the template
@@ -19,8 +21,13 @@ func NewTemplate(a *config.AppConfig) {
 	app = a //set the AppConfig
 }
 
+// AddDefaultData this fn is going to add some default data that we want available to all templates
+func AddDefaultData(td *models.TemplateData) {
+
+}
+
 // RenderTemplate uses the template cache to parse a template
-func RenderTemplate(w http.ResponseWriter, templateName string) {
+func RenderTemplate(w http.ResponseWriter, templateName string, tmpData *models.TemplateData) {
 	var tmpCache map[string]*template.Template
 
 	if app.UseCache {
@@ -30,7 +37,9 @@ func RenderTemplate(w http.ResponseWriter, templateName string) {
 	}
 
 	if template, ok := tmpCache[templateName]; ok {
-		template.Execute(w, nil)
+		AddDefaultData(tmpData)
+		fmt.Println(tmpData.StringMap["default"])
+		template.Execute(w, tmpData) //here we pass the template data
 	} else {
 		log.Fatal("could not get the template from the cache")
 	}
