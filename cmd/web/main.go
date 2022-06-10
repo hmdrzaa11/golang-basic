@@ -25,9 +25,11 @@ func main() {
 	render.NewTemplate(&app)       //share appConfig to the render template
 	repo := handlers.NewRepo(&app) //share appConfig to create a repo inside handlers
 	handlers.NewHandlers(repo)
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
 
 	fmt.Printf("Listening on port %s \n", portNumber)
-	http.ListenAndServe(portNumber, nil)
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+	log.Fatal(srv.ListenAndServe())
 }
